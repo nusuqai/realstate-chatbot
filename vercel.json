@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/real-estate/:path*",
+      "destination": "https://prepared-dyanna-nusuqai-demo-1a5b158b.koyeb.app/real-estate/:path*"
+    }
+  ]
+}

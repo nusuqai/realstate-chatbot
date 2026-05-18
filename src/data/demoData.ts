@@ -1,7 +1,6 @@
 import type { AgentResponse, ChatMessage, PromptCard } from '../types/agent'
 
-export const endpoint =
-  import.meta.env.VITE_REAL_ESTATE_QUERY_URL?.trim() || '/real-estate/query'
+export const endpoint = '/real-estate/query'
 
 export const promptCards: PromptCard[] = [
   {
