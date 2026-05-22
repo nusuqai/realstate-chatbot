@@ -3,6 +3,13 @@ import { formatScore, getInitials } from '../utils/format'
 import { Icon } from './Icon'
 
 type InsightsPanelProps = {
+  copy?: {
+    decision: string
+    emptySources: string
+    liveIssue: string
+    sources: string
+    summary: string
+  }
   error: string
   response?: AgentResponse
   snapshotItems: string[]
@@ -10,6 +17,13 @@ type InsightsPanelProps = {
 }
 
 export function InsightsPanel({
+  copy = {
+    decision: 'Decision Snapshot',
+    emptySources: 'Sources will appear after an answer.',
+    liveIssue: 'The live service needs attention.',
+    sources: 'Sources',
+    summary: 'Project Summary',
+  },
   error,
   response,
   snapshotItems,
@@ -20,7 +34,7 @@ export function InsightsPanel({
       <div className="side-card decision-card">
         <div className="side-card-title">
           <Icon name="shield" />
-          Decision Snapshot
+          {copy.decision}
         </div>
         <div className="decision-body">
           <div className="decision-ring">
@@ -37,7 +51,7 @@ export function InsightsPanel({
       <div className="side-card compact-card summary-card">
         <div className="side-card-title">
           <Icon name="building" />
-          Project Summary
+          {copy.summary}
         </div>
         <div className="summary-list">
           {summaryRows.map((row) => (
@@ -52,24 +66,30 @@ export function InsightsPanel({
       <div className="side-card source-card">
         <div className="side-card-title">
           <Icon name="link" />
-          Sources
+          {copy.sources}
         </div>
-        <SourceList sources={response?.sources} />
+        <SourceList emptyText={copy.emptySources} sources={response?.sources} />
       </div>
 
       {error ? (
         <div className="inline-error" role="status">
           <Icon name="code" />
-          The live service needs attention.
+          {copy.liveIssue}
         </div>
       ) : null}
     </aside>
   )
 }
 
-function SourceList({ sources }: { sources?: AgentResponse['sources'] }) {
+function SourceList({
+  emptyText,
+  sources,
+}: {
+  emptyText: string
+  sources?: AgentResponse['sources']
+}) {
   if (!Array.isArray(sources) || !sources.length) {
-    return <div className="empty-state compact">Sources will appear after an answer.</div>
+    return <div className="empty-state compact">{emptyText}</div>
   }
 
   return (

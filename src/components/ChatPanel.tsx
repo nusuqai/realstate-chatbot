@@ -1,10 +1,18 @@
 import { useEffect, useRef, type FormEvent } from 'react'
-import { sampleResponse } from '../data/demoData'
 import type { ChatMessage } from '../types/agent'
 import { AgentAnswer } from './AgentAnswer'
 import { Icon } from './Icon'
 
 type ChatPanelProps = {
+  copy?: {
+    emptyText: string
+    emptyTitle: string
+    loading: string
+    online: string
+    placeholder: string
+    subtitle: string
+    title: string
+  }
   input: string
   isLoading: boolean
   messages: ChatMessage[]
@@ -13,6 +21,15 @@ type ChatPanelProps = {
 }
 
 export function ChatPanel({
+  copy = {
+    emptyText: 'Choose a prompt above or ask your own real-estate question.',
+    emptyTitle: 'Start a new analysis',
+    loading: 'Searching project data and preparing a structured answer',
+    online: 'Online',
+    placeholder: 'Ask anything about real estate...',
+    subtitle: 'Ask about projects, prices, developers, ROI, delivery, and comparisons.',
+    title: 'Intelligence Assistant',
+  },
   input,
   isLoading,
   messages,
@@ -38,13 +55,13 @@ export function ChatPanel({
         </div>
         <div>
           <div className="agent-title">
-            Intelligence Assistant <span>AI</span>
+            {copy.title} <span>AI</span>
           </div>
-          <p>Ask about projects, prices, developers, ROI, delivery, and comparisons.</p>
+          <p>{copy.subtitle}</p>
         </div>
         <div className="agent-status" aria-label="Agent status">
           <span></span>
-          Online
+          {copy.online}
         </div>
       </div>
 
@@ -57,18 +74,19 @@ export function ChatPanel({
               </div>
             ) : (
               <div className="message-row assistant-row" key={message.id}>
-                <AgentAnswer
-                  response={message.response || sampleResponse}
-                  status={message.status}
-                />
+                {message.response ? (
+                  <AgentAnswer response={message.response} status={message.status} />
+                ) : (
+                  <div className="typing-card">{message.text}</div>
+                )}
               </div>
             ),
           )
         ) : (
           <div className="empty-chat">
             <Icon name="spark" />
-            <strong>Start a new analysis</strong>
-            <span>Choose a prompt above or ask your own real-estate question.</span>
+            <strong>{copy.emptyTitle}</strong>
+            <span>{copy.emptyText}</span>
           </div>
         )}
 
@@ -78,7 +96,7 @@ export function ChatPanel({
               <span></span>
               <span></span>
               <span></span>
-              Searching project data and preparing a structured answer
+              {copy.loading}
             </div>
           </div>
         ) : null}
@@ -93,7 +111,7 @@ export function ChatPanel({
           id="agent-query"
           value={input}
           onChange={(event) => setInput(event.target.value)}
-          placeholder="Ask anything about real estate..."
+          placeholder={copy.placeholder}
         />
         <button type="submit" disabled={isLoading || !input.trim()} title="Send query">
           <Icon name="send" />
