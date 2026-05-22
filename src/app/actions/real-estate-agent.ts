@@ -6,12 +6,16 @@ import { normalizeResponse } from '@/utils/agentResponse'
 type AgentActionInput = {
   query: string
   sessionId: string
+  /** MCP session ID returned by the first response — kept in client memory only */
+  mcpSessionId?: string
 }
 
 type AgentActionResult =
   | {
       ok: true
       response: AgentResponse
+      /** Return the mcp-session-id so the client can keep it in memory */
+      mcpSessionId: string | null
     }
   | {
       locked?: boolean
@@ -22,6 +26,7 @@ type AgentActionResult =
 export async function runRealEstateAgentQuery({
   query,
   sessionId,
+  mcpSessionId,
 }: AgentActionInput): Promise<AgentActionResult> {
   const cleanedQuery = query.trim()
 
@@ -37,7 +42,7 @@ export async function runRealEstateAgentQuery({
       locked: true,
       ok: false,
       message:
-        'The live real-estate agent is locked by the server environment. Set REAL_ESTATE_AGENT_ENABLED=true to enable Koyeb calls.',
+        'The live real-estate agent is currently disabled, contact the admin for more details.',
     }
   }
 
@@ -51,17 +56,27 @@ export async function runRealEstateAgentQuery({
   }
 
   try {
+    const requestHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+
+    // Forward the MCP session ID on all subsequent requests
+    if (mcpSessionId) {
+      requestHeaders['mcp-session-id'] = mcpSessionId
+    }
+
     const response = await fetch(endpoint, {
       body: JSON.stringify({
         query: cleanedQuery,
         sessionId,
       }),
       cache: 'no-store',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: requestHeaders,
       method: 'POST',
     })
+
+    // Capture the MCP session ID from the first response
+    const returnedMcpSessionId = response.headers.get('mcp-session-id')
 
     if (!response.ok) {
       return {
@@ -75,6 +90,8 @@ export async function runRealEstateAgentQuery({
     return {
       ok: true,
       response: normalizeResponse(payload),
+      // Return whichever ID we have: the one just received takes precedence
+      mcpSessionId: returnedMcpSessionId ?? mcpSessionId ?? null,
     }
   } catch (error) {
     return {
