@@ -1,19 +1,27 @@
 import { Icon } from './Icon'
 
 type AppHeaderProps = {
+  newChatLabel?: string
   onNewChat: () => void
+  subtitle?: string
+  title?: string
 }
 
-export function AppHeader({ onNewChat }: AppHeaderProps) {
+export function AppHeader({
+  newChatLabel = 'New chat',
+  onNewChat,
+  subtitle = 'Built by NusuqAI',
+  title = 'Real-Estate AI Agent',
+}: AppHeaderProps) {
   return (
     <header className="app-header">
       <div className="app-title">
         <span className="agent-mark">
-          <Icon name="spark" />
+          <img alt="" src="/aqar-lens-logo.png" />
         </span>
         <div>
-          <h1>Real-Estate AI Agent</h1>
-          <p>Built by NusuqAI</p>
+          <h1>{title}</h1>
+          <p>{subtitle}</p>
         </div>
       </div>
 
@@ -25,7 +33,7 @@ export function AppHeader({ onNewChat }: AppHeaderProps) {
         onClick={onNewChat}
       >
         <Icon name="plus" />
-        <span className="new-chat-label">New chat</span>
+        <span className="new-chat-label">{newChatLabel}</span>
       </button>
     </header>
   )

@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react'
-import { endpoint, initialMessages } from '../data/demoData'
+import { useCallback, useMemo, useState } from 'react'
+import { runRealEstateAgentQuery } from '@/app/actions/real-estate-agent'
+import { initialMessages } from '../data/demoData'
 import type { ChatMessage } from '../types/agent'
-import { createUnavailableResponse, normalizeResponse } from '../utils/agentResponse'
+import { createUnavailableResponse } from '../utils/agentResponse'
 import { createId, createSessionId } from '../utils/ids'
 
 const defaultPrompt = ''
@@ -17,7 +18,7 @@ export function useAgentChat() {
     return [...messages].reverse().find((message) => message.response)?.response
   }, [messages])
 
-  async function runQuery(queryText: string) {
+  const runQuery = useCallback(async (queryText: string) => {
     const cleanedQuery = queryText.trim()
 
     if (!cleanedQuery || isLoading) {
@@ -38,30 +39,21 @@ export function useAgentChat() {
     ])
 
     try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: cleanedQuery,
-          sessionId,
-        }),
+      const result = await runRealEstateAgentQuery({
+        query: cleanedQuery,
+        sessionId,
       })
 
-      if (!response.ok) {
-        throw new Error(`The agent returned ${response.status}.`)
+      if (!result.ok) {
+        throw new Error(result.message)
       }
-
-      const payload = (await response.json()) as unknown
-      const normalized = normalizeResponse(payload)
 
       setMessages((current) => [
         ...current,
         {
           id: createId('assistant'),
           role: 'assistant',
-          response: normalized,
+          response: result.response,
           status: 'live',
         },
       ])
@@ -84,14 +76,14 @@ export function useAgentChat() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [isLoading, sessionId])
 
-  function newChat() {
+  const newChat = useCallback(() => {
     setMessages([])
     setInput('')
     setError('')
     setSessionId(createSessionId())
-  }
+  }, [])
 
   return {
     error,

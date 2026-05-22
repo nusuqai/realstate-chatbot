@@ -17,11 +17,7 @@ export function AgentAnswer({ response, status }: AgentAnswerProps) {
       <div className="answer-meta">
         <span>
           <Icon name={status === 'error' ? 'code' : 'check'} />
-          {status === 'sample'
-            ? 'Example response'
-            : status === 'error'
-              ? 'Needs attention'
-              : 'Live response'}
+          {status === 'error' ? 'Needs attention' : 'Live response'}
         </span>
       </div>
 

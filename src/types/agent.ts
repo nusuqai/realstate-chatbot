@@ -34,7 +34,7 @@ export type AgentResponse = {
   [key: string]: unknown
 }
 
-export type MessageStatus = 'sample' | 'live' | 'error'
+export type MessageStatus = 'live' | 'error'
 
 export type ChatMessage = {
   id: string

@@ -30,7 +30,7 @@ export function createUnavailableResponse(message: string): AgentResponse {
 
 I could not get a live response from the real-estate agent right now.
 
-- You can keep exploring the sample output already shown.
+- The website pages remain available from the copied static dataset.
 - Try again once the agent service is running.
 - Your chat context will be preserved automatically for follow-up questions.
 

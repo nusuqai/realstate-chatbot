@@ -1,17 +1,28 @@
-import { useMemo, useState } from 'react'
-import './App.css'
-import { AppHeader } from './components/AppHeader'
-import { ChatPanel } from './components/ChatPanel'
-import { InsightsPanel } from './components/InsightsPanel'
-import { PromptRail } from './components/PromptRail'
-import { promptCards } from './data/demoData'
-import { useAgentChat } from './hooks/useAgentChat'
-import { buildSnapshot, buildSummaryRows } from './utils/agentResponse'
-import type { PromptCard, IconName } from './types/agent'
+'use client'
+
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { getPromptCards } from '@/data/demoData'
+import { getDictionary } from '@/i18n/dictionaries'
+import type { Locale } from '@/i18n/config'
+import { buildSnapshot, buildSummaryRows } from '@/utils/agentResponse'
+import { useAgentChat } from '@/hooks/useAgentChat'
+import type { IconName, PromptCard } from '@/types/agent'
+import { AppHeader } from './AppHeader'
+import { ChatPanel } from './ChatPanel'
+import { InsightsPanel } from './InsightsPanel'
+import { PromptRail } from './PromptRail'
 
 const followUpIcons: IconName[] = ['spark', 'chart', 'building', 'star', 'balance']
 
-function App() {
+export function ChatExperience({
+  initialPrompt,
+  locale,
+}: {
+  initialPrompt?: string
+  locale: Locale
+}) {
+  const dictionary = getDictionary(locale)
+  const didRunInitialPrompt = useRef(false)
   const [mobileView, setMobileView] = useState<'chat' | 'insights'>('chat')
   const {
     error,
@@ -33,8 +44,18 @@ function App() {
         query: question,
       }))
     }
-    return promptCards
-  }, [latestResponse])
+    return getPromptCards(locale)
+  }, [latestResponse, locale])
+
+  useEffect(() => {
+    if (!initialPrompt || didRunInitialPrompt.current) {
+      return
+    }
+
+    didRunInitialPrompt.current = true
+    setMobileView('chat')
+    void runQuery(initialPrompt)
+  }, [initialPrompt, runQuery])
 
   function handleNewChat() {
     newChat()
@@ -53,10 +74,13 @@ function App() {
 
   return (
     <main className="demo-page">
-      <div className="ambient-skyline" aria-hidden="true"></div>
-
-      <section className="demo-shell" aria-label="Real-estate agent demo">
-        <AppHeader onNewChat={handleNewChat} />
+      <section className="demo-shell" aria-label={dictionary.pages.chatTitle}>
+        <AppHeader
+          newChatLabel={dictionary.actions.newChat}
+          onNewChat={handleNewChat}
+          subtitle="NusuqAI"
+          title={dictionary.pages.chatTitle}
+        />
 
         <PromptRail
           disabled={isLoading}
@@ -64,14 +88,14 @@ function App() {
           onPromptSelect={handlePromptSelect}
         />
 
-        <div className="mobile-view-tabs" aria-label="Demo sections">
+        <div className="mobile-view-tabs" aria-label={dictionary.chat.tabsInsights}>
           <button
             aria-pressed={mobileView === 'chat'}
             className={mobileView === 'chat' ? 'active' : ''}
             type="button"
             onClick={() => setMobileView('chat')}
           >
-            Chat
+            {dictionary.chat.tabsChat}
           </button>
           <button
             aria-pressed={mobileView === 'insights'}
@@ -79,12 +103,13 @@ function App() {
             type="button"
             onClick={() => setMobileView('insights')}
           >
-            Insights
+            {dictionary.chat.tabsInsights}
           </button>
         </div>
 
         <section className={`demo-grid demo-grid-${mobileView}`}>
           <ChatPanel
+            copy={dictionary.chat}
             input={input}
             isLoading={isLoading}
             messages={messages}
@@ -93,6 +118,7 @@ function App() {
           />
 
           <InsightsPanel
+            copy={dictionary.chat}
             error={error}
             response={latestResponse}
             snapshotItems={buildSnapshot(latestResponse)}
@@ -103,6 +129,3 @@ function App() {
     </main>
   )
 }
-
-export default App
-
