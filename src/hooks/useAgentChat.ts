@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { runRealEstateAgentQuery } from '@/app/actions/real-estate-agent'
 import { initialMessages } from '../data/demoData'
 import type { ChatMessage } from '../types/agent'
@@ -13,6 +13,13 @@ export function useAgentChat() {
   const [sessionId, setSessionId] = useState(createSessionId)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+
+  /**
+   * MCP session ID — kept in a ref so it lives only in memory.
+   * It is never persisted to localStorage, sessionStorage, or cookies.
+   * A page refresh discards it automatically (ref resets to null).
+   */
+  const mcpSessionIdRef = useRef<string | null>(null)
 
   const latestResponse = useMemo(() => {
     return [...messages].reverse().find((message) => message.response)?.response
@@ -42,10 +49,17 @@ export function useAgentChat() {
       const result = await runRealEstateAgentQuery({
         query: cleanedQuery,
         sessionId,
+        // Send whatever MCP session ID we have in memory (null on first query)
+        mcpSessionId: mcpSessionIdRef.current ?? undefined,
       })
 
       if (!result.ok) {
         throw new Error(result.message)
+      }
+
+      // Store the returned MCP session ID in memory for subsequent calls
+      if (result.mcpSessionId) {
+        mcpSessionIdRef.current = result.mcpSessionId
       }
 
       setMessages((current) => [
@@ -83,6 +97,8 @@ export function useAgentChat() {
     setInput('')
     setError('')
     setSessionId(createSessionId())
+    // Clear the MCP session ID when starting a new chat
+    mcpSessionIdRef.current = null
   }, [])
 
   return {
