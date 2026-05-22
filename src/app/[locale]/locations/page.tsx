@@ -106,7 +106,7 @@ export default async function LocationsPage({ params }: LocationsPageProps) {
         </div>
       </section>
 
-      <section className="inline-cta glass-surface compact-cta">
+      <section className="inline-cta">
         <div>
           <Layers3 size={22} />
           <h2>{isAr ? 'قارن المناطق بالمساعد.' : 'Compare locations with the assistant.'}</h2>

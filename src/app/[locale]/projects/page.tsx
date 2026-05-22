@@ -60,29 +60,39 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
       <section className="project-feature-row">
         {heroProjects.map((project, index) => (
           <Link
-            className={`featured-project-card reveal-up delay-${index + 1}`}
+            className={`featured-project-card rich-hover-card reveal-up delay-${index + 1}`}
             href={projectPromptHref(locale, project.name, project.location)}
             key={project.id}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img alt={project.name} src={getProjectImage(project, 900, 600)} />
+
+            {/* Badge */}
             <div className="project-badge-row">
               <span className="pill glass-pill">{project.project_type}</span>
             </div>
-            <div className="featured-project-content">
-              <div>
-                <h2>{project.name}</h2>
-                <p>
-                  <MapPin size={15} />
-                  {project.location}, {project.city}
-                </p>
+
+            {/* Default overlay */}
+            <div className="property-showcase-overlay rich-overlay-rest">
+              <h2>{project.name}</h2>
+              <p className="card-location">
+                <MapPin size={14} />
+                {project.location}, {project.city}
+              </p>
+            </div>
+
+            {/* Hover overlay */}
+            <div className="rich-hover-overlay">
+              <div className="rich-hover-top">
+                <span className="pill glass-pill">{project.project_type}</span>
+                <span className="rich-rating">
+                  <Star size={13} />
+                  {project.rating}
+                </span>
               </div>
-              <span className="rating-chip">
-                <Star size={15} />
-                {project.rating}
-              </span>
-              <p>{getProjectSummary(project)}</p>
-              <dl className="mini-metrics">
+              <h3>{project.name}</h3>
+              <p className="rich-summary">{getProjectSummary(project)}</p>
+              <dl className="rich-metrics">
                 <div>
                   <dt>{dictionary.labels.developer}</dt>
                   <dd>{project.developer}</dd>
@@ -90,7 +100,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
                 <div>
                   <dt>{dictionary.labels.priceRange}</dt>
                   <dd>
-                    {formatMoney(project.price_min, locale)} - {formatMoney(project.price_max, locale)}
+                    {formatMoney(project.price_min, locale)} – {formatMoney(project.price_max, locale)}
                   </dd>
                 </div>
                 <div>
@@ -98,21 +108,20 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
                   <dd>{formatDate(project.delivery_date, locale)}</dd>
                 </div>
               </dl>
-              <div className="card-action-row">
-                <div className="tag-row">
-                  {project.tags.slice(0, 3).map((tag) => (
-                    <span key={tag}>{tag}</span>
-                  ))}
-                </div>
-                <span className="ghost-link">
-                  {isAr ? 'اسأل عن المشروع' : 'Ask about it'}
-                  <ArrowRight size={15} />
-                </span>
+              <div className="rich-tags">
+                {project.tags.slice(0, 3).map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
               </div>
+              <span className="rich-cta">
+                {isAr ? 'اسأل عن المشروع' : 'Ask about it'}
+                <ArrowRight size={14} />
+              </span>
             </div>
           </Link>
         ))}
       </section>
+
 
       <ProjectExplorer
         dictionary={dictionary}
@@ -121,7 +130,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
         projects={data.projects}
       />
 
-      <section className="inline-cta glass-surface compact-cta">
+      <section className="inline-cta">
         <div>
           <SlidersHorizontal size={22} />
           <h2>{dictionary.actions.compare}</h2>

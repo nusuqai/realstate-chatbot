@@ -10,16 +10,22 @@ type SiteFooterProps = {
 
 export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   return (
-    <footer className="site-footer">
-      <div>
-        <BrandLogo brand={dictionary.brand} locale={locale} />
-        <p>{dictionary.metaDescription}</p>
+    <footer className="site-footer-glass">
+      <div className="footer-glass-inner page-container">
+        <div className="footer-brand-col">
+          <BrandLogo brand={dictionary.brand} locale={locale} />
+          <p className="footer-desc">{dictionary.metaDescription}</p>
+        </div>
+        <nav className="footer-nav-col" aria-label="Footer navigation">
+          <span className="footer-nav-label">Explore</span>
+          <Link href={localePath(locale, '/projects')}>{dictionary.nav.projects}</Link>
+          <Link href={localePath(locale, '/locations')}>{dictionary.nav.locations}</Link>
+          <Link href={localePath(locale, '/developers')}>{dictionary.nav.developers}</Link>
+          <Link href={localePath(locale, '/chat')}>{dictionary.nav.chat}</Link>
+        </nav>
       </div>
-      <div className="footer-links">
-        <Link href={localePath(locale, '/projects')}>{dictionary.nav.projects}</Link>
-        <Link href={localePath(locale, '/locations')}>{dictionary.nav.locations}</Link>
-        <Link href={localePath(locale, '/developers')}>{dictionary.nav.developers}</Link>
-        <Link href={localePath(locale, '/chat')}>{dictionary.nav.chat}</Link>
+      <div className="footer-glass-bottom page-container">
+        <span>© {new Date().getFullYear()} {dictionary.brand}. All rights reserved.</span>
       </div>
     </footer>
   )
