@@ -5,7 +5,7 @@ import { ArrowRight, Building2, Compass, Layers3, Map, MapPin, Star } from 'luci
 import { getDictionary } from '@/i18n/dictionaries'
 import { isLocale, localePath, type Locale } from '@/i18n/config'
 import { getLocationGroups, getRealEstateData } from '@/lib/real-estate-data'
-import { getAverageRating, getCityProjectCount, getCityVisualClass } from '@/lib/page-assets'
+import { getAverageRating, getCityImage, getCityProjectCount } from '@/lib/page-assets'
 
 type LocationsPageProps = {
   params: Promise<{ locale: string }>
@@ -47,11 +47,13 @@ export default async function LocationsPage({ params }: LocationsPageProps) {
           const cityProjects = data.projects.filter((project) => project.city === city)
 
           return (
-            <article className={`destination-card reveal-up delay-${(index % 3) + 1}`} key={city}>
-              <div className={`data-visual destination-visual ${getCityVisualClass(city)}`}>
-                <span>{locations[0]?.type ?? dictionary.labels.location}</span>
-                <strong>{city}</strong>
-              </div>
+            <Link
+              className={`destination-card reveal-up delay-${(index % 3) + 1}`}
+              href={`${localePath(locale, '/projects')}?city=${encodeURIComponent(city)}`}
+              key={city}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img alt={city} src={getCityImage(city, 900, 600)} />
               <div className="destination-overlay">
                 <span className="pill glass-pill">{locations[0]?.type ?? dictionary.labels.location}</span>
                 <h2>{city}</h2>
@@ -74,7 +76,7 @@ export default async function LocationsPage({ params }: LocationsPageProps) {
                   </div>
                 </dl>
               </div>
-            </article>
+            </Link>
           )
         })}
       </section>

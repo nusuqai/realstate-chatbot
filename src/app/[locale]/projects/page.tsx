@@ -16,10 +16,13 @@ import { getProjectImage, getProjectSummary } from '@/lib/page-assets'
 
 type ProjectsPageProps = {
   params: Promise<{ locale: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default async function ProjectsPage({ params }: ProjectsPageProps) {
+export default async function ProjectsPage({ params, searchParams }: ProjectsPageProps) {
   const { locale: rawLocale } = await params
+  const resolvedSearchParams = await searchParams
+  const initialCity = typeof resolvedSearchParams.city === 'string' ? resolvedSearchParams.city : undefined
 
   if (!isLocale(rawLocale)) {
     notFound()
@@ -49,9 +52,18 @@ export default async function ProjectsPage({ params }: ProjectsPageProps) {
         <Metric icon={<TrendingUp size={21} />} value={stats.avgEntry} label={dictionary.labels.avgEntry} />
       </section>
 
+      <div className="section-heading airy">
+        <span className="eyebrow">{isAr ? 'المشاريع المميزة' : 'Featured Projects'}</span>
+        <h2>{isAr ? 'الأعلى تقييماً في السوق' : 'Top rated in the market'}</h2>
+      </div>
+
       <section className="project-feature-row">
         {heroProjects.map((project, index) => (
-          <article className={`featured-project-card reveal-up delay-${index + 1}`} key={project.id}>
+          <Link
+            className={`featured-project-card reveal-up delay-${index + 1}`}
+            href={projectPromptHref(locale, project.name, project.location)}
+            key={project.id}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img alt={project.name} src={getProjectImage(project, 900, 600)} />
             <div className="project-badge-row">
@@ -92,17 +104,22 @@ export default async function ProjectsPage({ params }: ProjectsPageProps) {
                     <span key={tag}>{tag}</span>
                   ))}
                 </div>
-                <Link href={projectPromptHref(locale, project.name, project.location)}>
+                <span className="ghost-link">
                   {isAr ? 'اسأل عن المشروع' : 'Ask about it'}
                   <ArrowRight size={15} />
-                </Link>
+                </span>
               </div>
             </div>
-          </article>
+          </Link>
         ))}
       </section>
 
-      <ProjectExplorer dictionary={dictionary} locale={locale} projects={data.projects} />
+      <ProjectExplorer
+        dictionary={dictionary}
+        initialCity={initialCity}
+        locale={locale}
+        projects={data.projects}
+      />
 
       <section className="inline-cta glass-surface compact-cta">
         <div>

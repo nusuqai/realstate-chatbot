@@ -563,8 +563,12 @@ dd {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  border-top: 1px solid var(--line);
-  padding: 30px 0 70px;
+  border-radius: 16px;
+  padding: 32px 40px;
+  margin-block: 40px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
+  box-shadow: 0 12px 32px rgba(0, 102, 77, 0.08);
+  border: 1px solid rgba(0, 102, 77, 0.1);
 }
 
 .inline-cta h2 {
@@ -1876,7 +1880,8 @@ blockquote footer {
 }
 
 .property-showcase-card > img,
-.featured-project-card > img {
+.featured-project-card > img,
+.destination-card > img {
   position: absolute;
   inset: 0;
 }
@@ -2388,9 +2393,10 @@ blockquote footer {
 
 .page-hero {
   position: relative;
-  min-height: 340px;
-  margin-inline: calc((100% - 100vw) / 2);
-  padding: clamp(72px, 9vw, 120px) max(24px, calc((100vw - 1420px) / 2 + 24px)) 86px;
+  min-height: 360px;
+  margin-top: 16px;
+  border-radius: 24px;
+  padding: clamp(64px, 8vw, 100px) 48px;
   overflow: hidden;
   background:
     linear-gradient(90deg, rgba(250, 252, 250, 0.98), rgba(250, 252, 250, 0.72), rgba(250, 252, 250, 0.42)),
@@ -2440,6 +2446,8 @@ blockquote footer {
 
 .stat-glass-board {
   margin-top: -54px;
+  margin-bottom: 32px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.04);
 }
 
 .filter-dock,
@@ -2539,6 +2547,7 @@ blockquote footer {
 .destination-card,
 .corridor-card,
 .developer-spotlight {
+  display: block;
   position: relative;
   overflow: hidden;
   border-radius: 8px;
@@ -2900,6 +2909,7 @@ blockquote footer {
 }
 
 .destination-card {
+  display: block;
   min-height: 360px;
   background: #0f231d;
   box-shadow: 0 18px 48px rgba(16, 35, 30, 0.1);

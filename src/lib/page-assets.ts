@@ -91,3 +91,9 @@ export function getHeroImage(width = 1200, height = 700) {
   return `https://picsum.photos/seed/hero-property/${width}/${height}`
 }
 
+/** Returns a deterministic placeholder image URL for a city */
+export function getCityImage(city: string, width = 800, height = 500) {
+  const seed = city.toLowerCase().replace(/\s+/g, '-')
+  return `https://picsum.photos/seed/city-${seed}/${width}/${height}`
+}
+

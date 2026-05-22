@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ArrowRight, CalendarDays, MapPin, Search, SlidersHorizontal, Star } from 'lucide-react'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { localePath, type Locale } from '@/i18n/config'
@@ -11,16 +11,23 @@ import { getProjectImage, getProjectSummary } from '@/lib/page-assets'
 
 type ProjectExplorerProps = {
   dictionary: Dictionary
+  initialCity?: string
   locale: Locale
   projects: Project[]
 }
 
 type SortKey = 'rating' | 'entry' | 'delivery'
 
-export function ProjectExplorer({ dictionary, locale, projects }: ProjectExplorerProps) {
+export function ProjectExplorer({ dictionary, initialCity, locale, projects }: ProjectExplorerProps) {
   const isAr = locale === 'ar'
   const [query, setQuery] = useState('')
-  const [city, setCity] = useState('all')
+  const [city, setCity] = useState(initialCity || 'all')
+
+  useEffect(() => {
+    if (initialCity) {
+      setCity(initialCity)
+    }
+  }, [initialCity])
   const [developer, setDeveloper] = useState('all')
   const [type, setType] = useState('all')
   const [minRating, setMinRating] = useState('all')
@@ -145,7 +152,11 @@ export function ProjectExplorer({ dictionary, locale, projects }: ProjectExplore
 
       <div className="modern-project-grid">
         {filteredProjects.map((project) => (
-          <article className="modern-project-card glass-surface" key={project.id}>
+          <Link
+            className="modern-project-card glass-surface"
+            href={projectPromptHref(locale, project.name, project.location)}
+            key={project.id}
+          >
             <div className="modern-card-media">
               <span>{project.project_type}</span>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -189,13 +200,13 @@ export function ProjectExplorer({ dictionary, locale, projects }: ProjectExplore
                     <span key={tag}>{tag}</span>
                   ))}
                 </div>
-                <Link href={projectPromptHref(locale, project.name, project.location)}>
+                <span className="ghost-link">
                   {dictionary.actions.askAgent}
                   <ArrowRight size={15} />
-                </Link>
+                </span>
               </div>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
     </section>

@@ -26,7 +26,7 @@ export default async function DevelopersPage({ params }: DevelopersPageProps) {
   const stats = getMarketStats(data, locale)
   const leader = developers[0]
   const earliestFounded = Math.min(...developers.map((developer) => developer.founded))
-  const activeCities = new Set(developers.map((developer) => developer.city)).size
+  const activeCities = new Set(data.projects.map((project) => project.city)).size
 
   return (
     <main className="subpage immersive-page">
@@ -41,7 +41,7 @@ export default async function DevelopersPage({ params }: DevelopersPageProps) {
       <section className="stat-glass-board">
         <Metric icon={<Award size={21} />} value={developers.length} label={dictionary.labels.developers} />
         <Metric icon={<CalendarDays size={21} />} value={earliestFounded} label={dictionary.labels.founded} />
-        <Metric icon={<Globe2 size={21} />} value={activeCities} label={dictionary.labels.city} />
+        <Metric icon={<Globe2 size={21} />} value={activeCities} label={isAr ? 'مدن المشروعات' : 'Cities'} />
         <Metric icon={<Building2 size={21} />} value={stats.projectCount} label={dictionary.labels.projects} />
       </section>
 
