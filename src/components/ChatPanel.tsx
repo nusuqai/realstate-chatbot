@@ -59,10 +59,6 @@ export function ChatPanel({
           </div>
           <p>{copy.subtitle}</p>
         </div>
-        <div className="agent-status" aria-label="Agent status">
-          <span></span>
-          {copy.online}
-        </div>
       </div>
 
       <div className="chat-scroll" aria-live="polite">
@@ -70,7 +66,7 @@ export function ChatPanel({
           messages.map((message) =>
             message.role === 'user' ? (
               <div className="message-row user-row" key={message.id}>
-                <div className="user-bubble">{message.text}</div>
+                <div className="user-bubble" dir="auto">{message.text}</div>
               </div>
             ) : (
               <div className="message-row assistant-row" key={message.id}>
@@ -109,6 +105,7 @@ export function ChatPanel({
         </label>
         <input
           id="agent-query"
+          dir="auto"
           value={input}
           onChange={(event) => setInput(event.target.value)}
           placeholder={copy.placeholder}

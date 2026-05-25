@@ -3,7 +3,6 @@ import type { ReactNode } from 'react'
 import { notFound } from 'next/navigation'
 import {
   ArrowRight,
-  BarChart3,
   Building2,
   MapPin,
   Search,
@@ -88,7 +87,6 @@ export default async function HomePage({ params }: HomePageProps) {
               </span>
             </div>
             <div className="hero-property-frame">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img alt={stats.topProject} src={getHeroImage()} />
               <div className="hero-data-visual" style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: 18, background: 'linear-gradient(0deg, rgba(8,18,15,0.6), transparent 60%)', color: '#fff', pointerEvents: 'none' }}>
                 <span style={{ width: 'fit-content', borderRadius: 999, padding: '7px 10px', background: 'rgba(255,255,255,0.16)', fontSize: 11, fontWeight: 900, textTransform: 'uppercase' as const }}>{dictionary.labels.topProject}</span>
@@ -122,8 +120,8 @@ export default async function HomePage({ params }: HomePageProps) {
           <h2>{dictionary.home.featuredText}</h2>
           <p>
             {isAr
-              ? 'بطاقات بصرية تربط السعر، التسليم، المطور، والتقييم في قراءة واحدة.'
-              : 'Visual project cards connect price, delivery, developer quality, and rating in one scan.'}
+                ? 'بطاقات واضحة تجمع السعر وموعد التسليم والمطور والتقييم في قراءة واحدة.'
+                : 'Clear project cards bring price, delivery, developer quality, and rating into one quick view.'}
           </p>
         </div>
         <div className="featured-property-grid">
@@ -135,7 +133,6 @@ export default async function HomePage({ params }: HomePageProps) {
                 href={`${localePath(locale, '/chat')}?prompt=${encodeURIComponent(prompt)}`}
                 key={project.id}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img alt={project.name} src={getProjectImage(project, 900, 600)} />
 
                 {/* Default overlay — visible at rest */}
@@ -192,8 +189,8 @@ export default async function HomePage({ params }: HomePageProps) {
             <h2>{dictionary.home.marketText}</h2>
             <p>
               {isAr
-                ? 'الرؤى تجمع مؤشرات العائد والنمو وسرعة التسليم والتقييمات لتقليل الضوضاء قبل القرار.'
-                : 'The intelligence layer blends ROI, growth, delivery speed, and reviews to reduce noise before a decision.'}
+                ? 'الرؤى تجمع العائد والنمو وسرعة التسليم والانطباعات لتقريبك من القرار المناسب.'
+                : 'The intelligence layer brings together ROI, growth, delivery speed, and reviews to help you move closer to the right decision.'}
             </p>
           </div>
           <div className="signal-stack">
@@ -255,8 +252,8 @@ export default async function HomePage({ params }: HomePageProps) {
           </div>
           <p>
             {isAr
-              ? `متوسط تقييم المشروعات المختارة ${getAverageRating(featuredProjects)} من البيانات الحالية.`
-              : `Featured communities average ${getAverageRating(featuredProjects)} rating across the current dataset.`}
+                ? `تحقق المشروعات المختارة متوسط تقييم ${getAverageRating(featuredProjects)} ضمن العرض الحالي.`
+                : `Featured communities average a ${getAverageRating(featuredProjects)} rating in the current market view.`}
           </p>
         </div>
       </section>

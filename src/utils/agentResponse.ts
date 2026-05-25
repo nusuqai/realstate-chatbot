@@ -26,18 +26,18 @@ export function normalizeResponse(payload: unknown): AgentResponse {
 
 export function createUnavailableResponse(message: string): AgentResponse {
   return {
-    text: `### Agent response unavailable
+    text: `### Assistant response unavailable
 
-I could not get a live response from the real-estate agent right now.
+I could not get a response from the real-estate assistant right now.
 
-- The website pages remain available from the copied static dataset.
-- Try again once the agent service is running.
+- You can still browse projects, locations, developers, and insights across the site.
+- Try again once the assistant service is available.
 - Your chat context will be preserved automatically for follow-up questions.
 
 Details: **${message}**`,
     charts: null,
     highlights: [
-      'The chat UI is ready for live responses.',
+      'The chat experience is ready for guided answers.',
       'Each chat keeps its own conversation memory.',
       'Structured answers will render as text, charts, highlights, and sources.',
     ],
@@ -91,5 +91,5 @@ export function buildSummaryRows(response: AgentResponse | undefined): SummaryRo
 
   return rows.slice(0, 5).length
     ? rows.slice(0, 5)
-    : [{ label: 'Agent status', value: 'Ready' }]
+    : [{ label: '', value: '' }]
 }

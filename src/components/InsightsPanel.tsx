@@ -99,7 +99,7 @@ function SourceList({
           <div className="source-logo">{getInitials(source.title)}</div>
           <div>
             <strong>{source.title || 'Untitled source'}</strong>
-            <span>{source.source || 'knowledge base'}</span>
+            <span>{source.source || 'Market insights'}</span>
           </div>
           <small>{source.id || formatScore(source.score)}</small>
         </div>

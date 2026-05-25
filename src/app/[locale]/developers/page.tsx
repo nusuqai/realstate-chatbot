@@ -154,7 +154,9 @@ export default async function DevelopersPage({ params }: DevelopersPageProps) {
                       style={{ width: `${(developer.rating / 5) * 100}%` }}
                     />
                   </div>
-                  <span>{((developer.rating / 5) * 100).toFixed(0)}% reliability</span>
+                  <span>
+                    {((developer.rating / 5) * 100).toFixed(0)}% {dictionary.labels.reliability}
+                  </span>
                 </div>
 
                 {/* CTA */}
@@ -173,18 +175,18 @@ export default async function DevelopersPage({ params }: DevelopersPageProps) {
         <section className="devpage-spotlight page-container">
           <div className="devpage-spotlight-inner glass-surface">
             <div className="devpage-spotlight-left">
-              <span className="eyebrow">{isAr ? 'قائد السوق' : 'Market leader'}</span>
+              <span className="eyebrow">{isAr ? 'إضاءة على المطور' : 'Developer spotlight'}</span>
               <h2>{developers[0].name}</h2>
               <p>
                 {isAr
-                  ? 'يتصدر القائمة بناء على التقييم وعمق المحفظة في البيانات الثابتة.'
-                  : 'Leading the current bench by rating and portfolio depth in the static dataset.'}
+                  ? 'ملف قوي يجمع بين التقييم المرتفع وعمق المحفظة ضمن العرض الحالي.'
+                  : 'A strong profile shaped by rating quality and portfolio depth in the current market view.'}
               </p>
               <Link
                 className="solid-link"
                 href={`${localePath(locale, '/chat')}?prompt=${encodeURIComponent(`Tell me everything about ${developers[0].name} and why they lead the developer rankings.`)}`}
               >
-                {isAr ? 'تحليل عمق' : 'Deep analysis'}
+                {isAr ? 'تحليل مفصل' : 'Detailed analysis'}
                 <ArrowRight size={15} />
               </Link>
             </div>

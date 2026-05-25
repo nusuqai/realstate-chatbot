@@ -52,7 +52,6 @@ export default async function LocationsPage({ params }: LocationsPageProps) {
               href={`${localePath(locale, '/projects')}?city=${encodeURIComponent(city)}`}
               key={city}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img alt={city} src={getCityImage(city, 900, 600)} />
               <div className="destination-overlay">
                 <span className="pill glass-pill">{locations[0]?.type ?? dictionary.labels.location}</span>
@@ -84,7 +83,7 @@ export default async function LocationsPage({ params }: LocationsPageProps) {
       <section className="corridor-section">
         <div className="section-heading airy">
           <span className="eyebrow">{isAr ? 'ممرات السوق' : 'Market corridors'}</span>
-          <h2>{isAr ? 'اقرأ المناطق حسب أسلوب الحياة والطلب.' : 'Read locations by lifestyle and demand.'}</h2>
+          <h2>{isAr ? 'اقرأ المناطق حسب أسلوب الحياة ومستوى الطلب.' : 'Read locations by lifestyle and demand.'}</h2>
         </div>
         <div className="corridor-grid">
           {groups.slice(0, 4).map(([city, locations]) => (
@@ -93,8 +92,8 @@ export default async function LocationsPage({ params }: LocationsPageProps) {
               <h3>{city}</h3>
               <p>
                 {isAr
-                  ? `${locations.length} منطقة مع ${getCityProjectCount(data, city)} مشروع في البيانات.`
-                  : `${locations.length} districts with ${getCityProjectCount(data, city)} projects in the dataset.`}
+                  ? `${locations.length} منطقة مع ${getCityProjectCount(data, city)} مشروع ضمن العرض الحالي.`
+                  : `${locations.length} districts with ${getCityProjectCount(data, city)} projects in the current market view.`}
               </p>
               <div className="location-chip-list">
                 {locations.slice(0, 5).map((location) => (
@@ -139,6 +138,9 @@ function Metric({
 }
 
 function locationPromptHref(locale: Locale) {
-  const prompt = 'Compare the strongest locations in the static real-estate dataset.'
+  const prompt =
+    locale === 'ar'
+      ? 'قارن أبرز المناطق العقارية وساعدني على اختيار الأنسب حسب أسلوب الحياة وفرص الاستثمار.'
+      : 'Compare the strongest real-estate locations and help me choose based on lifestyle and investment potential.'
   return `${localePath(locale, '/chat')}?prompt=${encodeURIComponent(prompt)}`
 }

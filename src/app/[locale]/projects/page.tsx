@@ -64,7 +64,6 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
             href={projectPromptHref(locale, project.name, project.location)}
             key={project.id}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img alt={project.name} src={getProjectImage(project, 900, 600)} />
 
             {/* Badge */}

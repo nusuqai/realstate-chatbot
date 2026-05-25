@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ArrowRight, CalendarDays, MapPin, Search, SlidersHorizontal, Star } from 'lucide-react'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { localePath, type Locale } from '@/i18n/config'
@@ -22,12 +22,6 @@ export function ProjectExplorer({ dictionary, initialCity, locale, projects }: P
   const isAr = locale === 'ar'
   const [query, setQuery] = useState('')
   const [city, setCity] = useState(initialCity || 'all')
-
-  useEffect(() => {
-    if (initialCity) {
-      setCity(initialCity)
-    }
-  }, [initialCity])
   const [developer, setDeveloper] = useState('all')
   const [type, setType] = useState('all')
   const [minRating, setMinRating] = useState('all')
@@ -94,7 +88,7 @@ export function ProjectExplorer({ dictionary, initialCity, locale, projects }: P
           </strong>
         </div>
         <button onClick={resetFilters} type="button">
-          {isAr ? 'مسح الفلاتر' : 'Clear filters'}
+          {isAr ? 'مسح عوامل التصفية' : 'Clear filters'}
         </button>
       </div>
 
@@ -143,10 +137,10 @@ export function ProjectExplorer({ dictionary, initialCity, locale, projects }: P
           <option value="4">4.0+</option>
         </FilterSelect>
 
-        <FilterSelect label={isAr ? 'الترتيب' : 'Sort'} onChange={(value) => setSort(value as SortKey)} value={sort}>
+        <FilterSelect label={dictionary.labels.sort} onChange={(value) => setSort(value as SortKey)} value={sort}>
           <option value="rating">{isAr ? 'الأعلى تقييما' : 'Top rated'}</option>
-          <option value="entry">{isAr ? 'الأقل سعرا' : 'Lowest entry'}</option>
-          <option value="delivery">{isAr ? 'الأقرب تسليما' : 'Soonest delivery'}</option>
+          <option value="entry">{isAr ? 'الأقل سعرا للبداية' : 'Lowest entry price'}</option>
+          <option value="delivery">{isAr ? 'الأقرب في التسليم' : 'Soonest delivery'}</option>
         </FilterSelect>
       </div>
 
@@ -159,7 +153,6 @@ export function ProjectExplorer({ dictionary, initialCity, locale, projects }: P
           >
             <div className="modern-card-media">
               <span>{project.project_type}</span>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img alt={project.name} src={getProjectImage(project)} />
             </div>
             <div className="modern-card-body">

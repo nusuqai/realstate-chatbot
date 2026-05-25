@@ -17,7 +17,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
           <p className="footer-desc">{dictionary.metaDescription}</p>
         </div>
         <nav className="footer-nav-col" aria-label="Footer navigation">
-          <span className="footer-nav-label">Explore</span>
+          <span className="footer-nav-label">{dictionary.footer.explore}</span>
           <Link href={localePath(locale, '/projects')}>{dictionary.nav.projects}</Link>
           <Link href={localePath(locale, '/locations')}>{dictionary.nav.locations}</Link>
           <Link href={localePath(locale, '/developers')}>{dictionary.nav.developers}</Link>
@@ -25,7 +25,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
         </nav>
       </div>
       <div className="footer-glass-bottom page-container">
-        <span>© {new Date().getFullYear()} {dictionary.brand}. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} {dictionary.brand}. {dictionary.footer.rights}</span>
       </div>
     </footer>
   )

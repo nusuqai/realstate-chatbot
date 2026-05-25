@@ -689,6 +689,7 @@ blockquote footer {
   padding: 12px;
   overflow: hidden;
   background: #eef3ef;
+  direction: ltr;
 }
 
 .demo-shell {
