@@ -36,6 +36,9 @@ export function InsightsPanel({
           <Icon name="shield" />
           {copy.decision}
         </div>
+        {response?.summary?.verdict ? (
+          <div className="decision-verdict">{response.summary.verdict}</div>
+        ) : null}
         <div className="decision-body">
           <div className="decision-ring">
             <Icon name="star" />

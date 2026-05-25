@@ -20,6 +20,19 @@ export function normalizeResponse(payload: unknown): AgentResponse {
     charts: Array.isArray(value.charts) ? value.charts : null,
     highlights: Array.isArray(value.highlights) ? value.highlights.map(String) : null,
     sources: Array.isArray(value.sources) ? value.sources : null,
+    summary:
+      value.summary && typeof value.summary === 'object'
+        ? {
+            takeaways: Array.isArray(value.summary.takeaways)
+              ? value.summary.takeaways.map(String)
+              : [],
+            dataPoints: Array.isArray(value.summary.dataPoints)
+              ? value.summary.dataPoints
+              : [],
+            verdict:
+              typeof value.summary.verdict === 'string' ? value.summary.verdict : null,
+          }
+        : null,
     followUpQuestions: Array.isArray(value.followUpQuestions) ? value.followUpQuestions.map(String) : null,
   }
 }
@@ -47,16 +60,23 @@ Details: **${message}**`,
 
 export function buildSnapshot(response: AgentResponse | undefined) {
   const safeResponse = response || emptyResponse
-  const highlights = Array.isArray(safeResponse.highlights) ? safeResponse.highlights : []
 
+  // Priority 1: structured summary takeaways from the agent
+  const takeaways = safeResponse.summary?.takeaways
+  if (Array.isArray(takeaways) && takeaways.length) {
+    return takeaways.slice(0, 3)
+  }
+
+  // Priority 2: legacy highlights field
+  const highlights = Array.isArray(safeResponse.highlights) ? safeResponse.highlights : []
   if (highlights.length) {
     return highlights.slice(0, 3)
   }
 
+  // Priority 3: extract from text
   const text = safeResponse.text || ''
   const lines = text.split('\n').map((line) => line.trim()).filter(Boolean)
 
-  // Try bullet points first (-, *, •)
   const bullets = lines
     .filter((line) => /^[-*•]\s+/.test(line))
     .map((line) => line.replace(/^[-*•]\s+/, '').replace(/\*\*/g, ''))
@@ -65,7 +85,6 @@ export function buildSnapshot(response: AgentResponse | undefined) {
     return bullets.slice(0, 3)
   }
 
-  // Try key-value patterns like "Rating: 4.0" or "**Sentiment**: Neutral"
   const kvLines = lines
     .filter((line) => /^(\*\*[^*]+\*\*|[A-Z][a-zA-Z\s]+)\s*[:：]\s*.+/.test(line))
     .map((line) => line.replace(/\*\*/g, ''))
@@ -74,7 +93,6 @@ export function buildSnapshot(response: AgentResponse | undefined) {
     return kvLines.slice(0, 3)
   }
 
-  // Fall back to the first meaningful sentences (skip headings)
   const sentences = lines
     .filter((line) => !line.startsWith('#') && line.length > 15 && line.length < 150)
     .slice(0, 3)
@@ -88,12 +106,25 @@ export function buildSnapshot(response: AgentResponse | undefined) {
 
 export function buildSummaryRows(response: AgentResponse | undefined): SummaryRow[] {
   const safeResponse = response || emptyResponse
+
+  // Priority 1: structured summary dataPoints from the agent
+  const dataPoints = safeResponse.summary?.dataPoints
+  if (Array.isArray(dataPoints) && dataPoints.length) {
+    return dataPoints
+      .filter((dp) => dp.label && dp.value)
+      .slice(0, 5)
+      .map((dp) => ({ label: dp.label, value: dp.value }))
+  }
+
+  // Priority 2: derive from sources and charts (legacy)
   const rows: SummaryRow[] = []
 
   safeResponse.sources?.slice(0, 4).forEach((source) => {
     rows.push({
       label: source.title || 'Source',
-      value: source.score ? formatScore(source.score) : source.id || 'Used',
+      value: source.score
+        ? `${formatScore(source.score)} relevance`
+        : source.source || source.id || 'Referenced',
     })
   })
 
@@ -110,12 +141,15 @@ export function buildSummaryRows(response: AgentResponse | undefined): SummaryRo
     })
   })
 
-  // If no structured data, extract key-value pairs from response text
-  if (!rows.length && safeResponse.text) {
+  if (rows.length) {
+    return rows.slice(0, 5)
+  }
+
+  // Priority 3: extract key-value pairs from response text
+  if (safeResponse.text) {
     const lines = safeResponse.text.split('\n').map((line) => line.trim()).filter(Boolean)
 
     for (const line of lines) {
-      // Match patterns like "**Rating**: 4.0", "Rating: 4.0", "- **Rating**: 4.0"
       const kvMatch = line.match(
         /^[-*•]?\s*\*?\*?([^*:]{2,30})\*?\*?\s*[:：]\s*"?([^"\n]{1,60})"?\s*$/
       )
@@ -124,7 +158,6 @@ export function buildSummaryRows(response: AgentResponse | undefined): SummaryRo
         const label = kvMatch[1].trim()
         const value = kvMatch[2].trim().replace(/\*\*/g, '')
 
-        // Skip headings and very long values that aren't data points
         if (label.length <= 25 && value.length <= 50) {
           rows.push({ label, value })
         }

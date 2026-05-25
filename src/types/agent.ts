@@ -25,11 +25,23 @@ export type AgentSource = {
   score?: number
 }
 
+export type AgentSummaryDataPoint = {
+  label: string
+  value: string
+}
+
+export type AgentSummary = {
+  takeaways: string[]
+  dataPoints: AgentSummaryDataPoint[]
+  verdict: string | null
+}
+
 export type AgentResponse = {
   text?: string
   charts?: AgentChart[] | null
   highlights?: string[] | null
   sources?: AgentSource[] | null
+  summary?: AgentSummary | null
   followUpQuestions?: string[] | null
   [key: string]: unknown
 }

@@ -1298,6 +1298,17 @@ blockquote footer {
   font-weight: 850;
 }
 
+.decision-verdict {
+  margin: -4px 0 8px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: #eef7f3;
+  color: #007a5a;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
 .decision-body {
   display: grid;
   grid-template-columns: 90px 1fr;

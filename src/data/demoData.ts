@@ -17,6 +17,7 @@ export const emptyResponse: AgentResponse = {
   charts: null,
   highlights: null,
   sources: null,
+  summary: null,
   followUpQuestions: null,
 }
 
