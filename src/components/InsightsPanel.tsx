@@ -54,12 +54,20 @@ export function InsightsPanel({
           {copy.summary}
         </div>
         <div className="summary-list">
-          {summaryRows.map((row) => (
-            <div className="summary-row" key={`${row.label}-${row.value}`}>
-              <span>{row.label}</span>
-              <strong>{row.value}</strong>
+          {summaryRows.length > 0 ? (
+            summaryRows.map((row) => (
+              <div className="summary-row" key={`${row.label}-${row.value}`}>
+                <span>{row.label}</span>
+                <strong>{row.value}</strong>
+              </div>
+            ))
+          ) : (
+            <div className="empty-state compact">
+              {response?.text
+                ? 'No structured data points in this response.'
+                : 'Data points will appear after an answer.'}
             </div>
-          ))}
+          )}
         </div>
       </div>
 
@@ -68,7 +76,14 @@ export function InsightsPanel({
           <Icon name="link" />
           {copy.sources}
         </div>
-        <SourceList emptyText={copy.emptySources} sources={response?.sources} />
+        <SourceList
+          emptyText={
+            response?.text
+              ? 'No sources referenced in this response.'
+              : copy.emptySources
+          }
+          sources={response?.sources}
+        />
       </div>
 
       {error ? (

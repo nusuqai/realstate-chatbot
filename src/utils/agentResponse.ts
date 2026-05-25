@@ -53,16 +53,37 @@ export function buildSnapshot(response: AgentResponse | undefined) {
     return highlights.slice(0, 3)
   }
 
-  const bullets =
-    safeResponse.text
-      ?.split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.startsWith('- '))
-      .map((line) => line.replace(/^-\s+/, '').replace(/\*\*/g, '')) || []
+  const text = safeResponse.text || ''
+  const lines = text.split('\n').map((line) => line.trim()).filter(Boolean)
 
-  return bullets.slice(0, 3).length
-    ? bullets.slice(0, 3)
-    : ['Ask a question to generate decision-ready takeaways.']
+  // Try bullet points first (-, *, •)
+  const bullets = lines
+    .filter((line) => /^[-*•]\s+/.test(line))
+    .map((line) => line.replace(/^[-*•]\s+/, '').replace(/\*\*/g, ''))
+
+  if (bullets.length) {
+    return bullets.slice(0, 3)
+  }
+
+  // Try key-value patterns like "Rating: 4.0" or "**Sentiment**: Neutral"
+  const kvLines = lines
+    .filter((line) => /^(\*\*[^*]+\*\*|[A-Z][a-zA-Z\s]+)\s*[:：]\s*.+/.test(line))
+    .map((line) => line.replace(/\*\*/g, ''))
+
+  if (kvLines.length) {
+    return kvLines.slice(0, 3)
+  }
+
+  // Fall back to the first meaningful sentences (skip headings)
+  const sentences = lines
+    .filter((line) => !line.startsWith('#') && line.length > 15 && line.length < 150)
+    .slice(0, 3)
+
+  if (sentences.length) {
+    return sentences.map((s) => s.replace(/\*\*/g, ''))
+  }
+
+  return ['Ask a question to generate decision-ready takeaways.']
 }
 
 export function buildSummaryRows(response: AgentResponse | undefined): SummaryRow[] {
@@ -89,7 +110,31 @@ export function buildSummaryRows(response: AgentResponse | undefined): SummaryRo
     })
   })
 
-  return rows.slice(0, 5).length
-    ? rows.slice(0, 5)
-    : [{ label: '', value: '' }]
+  // If no structured data, extract key-value pairs from response text
+  if (!rows.length && safeResponse.text) {
+    const lines = safeResponse.text.split('\n').map((line) => line.trim()).filter(Boolean)
+
+    for (const line of lines) {
+      // Match patterns like "**Rating**: 4.0", "Rating: 4.0", "- **Rating**: 4.0"
+      const kvMatch = line.match(
+        /^[-*•]?\s*\*?\*?([^*:]{2,30})\*?\*?\s*[:：]\s*"?([^"\n]{1,60})"?\s*$/
+      )
+
+      if (kvMatch) {
+        const label = kvMatch[1].trim()
+        const value = kvMatch[2].trim().replace(/\*\*/g, '')
+
+        // Skip headings and very long values that aren't data points
+        if (label.length <= 25 && value.length <= 50) {
+          rows.push({ label, value })
+        }
+      }
+
+      if (rows.length >= 5) {
+        break
+      }
+    }
+  }
+
+  return rows.slice(0, 5)
 }
