@@ -10,7 +10,6 @@ import {
   ShieldCheck,
   Sparkles,
   Star,
-  TrendingUp,
 } from 'lucide-react'
 import { getDictionary } from '@/i18n/dictionaries'
 import { isLocale, localePath, type Locale } from '@/i18n/config'
@@ -100,13 +99,10 @@ export default async function HomePage({ params }: HomePageProps) {
                 <strong>{stats.avgEntry}</strong>
               </div>
             </div>
-            <div className="hero-glass-card hero-score-card">
-              <TrendingUp size={18} />
-              <div>
-                <strong>{investments[0]?.value}%</strong>
-                <span>{investments[0]?.project}</span>
-              </div>
-            </div>
+            <Link className="hero-ai-btn" href={localePath(locale, '/chat')}>
+              <Sparkles size={18} />
+              {dictionary.nav.chat}
+            </Link>
           </div>
         </div>
       </section>
